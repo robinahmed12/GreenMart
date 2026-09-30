@@ -1,0 +1,16 @@
+{
+  "name": "@catalog/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Next.js storefront. Implemented by the add-product-catalog change.",
+  "scripts": {
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@catalog/product-contract": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.2"
+  }
+}

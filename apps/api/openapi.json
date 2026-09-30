@@ -1,0 +1,1422 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Product Catalog API",
+    "version": "1.0.0",
+    "description": "Read-only catalog service. Responses use a data envelope. Listing responses add a meta block carrying both counters, so an empty catalog (catalogTotal 0) can be told apart from a filter that matched nothing (catalogTotal greater than 0, matched 0)."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "sellingUnit": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "weight",
+                  "count",
+                  "bunch",
+                  "pack"
+                ]
+              }
+            },
+            "required": [
+              "label",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          "stockStatus": {
+            "type": "string",
+            "enum": [
+              "in_stock",
+              "low_stock",
+              "out_of_stock"
+            ]
+          },
+          "category": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "sortOrder": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "slug",
+              "name",
+              "sortOrder"
+            ],
+            "additionalProperties": false
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "origin": {
+            "type": "string"
+          },
+          "storage": {
+            "type": "string"
+          },
+          "preparation": {
+            "type": "string"
+          },
+          "nutrition": {
+            "type": "string"
+          },
+          "allergens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "aliases",
+          "description",
+          "price",
+          "sellingUnit",
+          "stockStatus",
+          "category"
+        ],
+        "additionalProperties": false
+      },
+      "ProductListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slug": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "aliases": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "price": {
+                  "type": "number",
+                  "minimum": 0,
+                  "exclusiveMinimum": true
+                },
+                "sellingUnit": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "weight",
+                        "count",
+                        "bunch",
+                        "pack"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                },
+                "stockStatus": {
+                  "type": "string",
+                  "enum": [
+                    "in_stock",
+                    "low_stock",
+                    "out_of_stock"
+                  ]
+                },
+                "category": {
+                  "type": "object",
+                  "properties": {
+                    "slug": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "sortOrder": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "name",
+                    "sortOrder"
+                  ],
+                  "additionalProperties": false
+                },
+                "imageUrl": {
+                  "type": "string"
+                },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "origin": {
+                  "type": "string"
+                },
+                "storage": {
+                  "type": "string"
+                },
+                "preparation": {
+                  "type": "string"
+                },
+                "nutrition": {
+                  "type": "string"
+                },
+                "allergens": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "slug",
+                "name",
+                "aliases",
+                "description",
+                "price",
+                "sellingUnit",
+                "stockStatus",
+                "category"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "matched": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "catalogTotal": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "slug": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sortOrder": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "name",
+                    "sortOrder",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "matched",
+              "catalogTotal",
+              "categories"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "ProductDetailResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "slug": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "aliases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "price": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "sellingUnit": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "weight",
+                      "count",
+                      "bunch",
+                      "pack"
+                    ]
+                  }
+                },
+                "required": [
+                  "label",
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              "stockStatus": {
+                "type": "string",
+                "enum": [
+                  "in_stock",
+                  "low_stock",
+                  "out_of_stock"
+                ]
+              },
+              "category": {
+                "type": "object",
+                "properties": {
+                  "slug": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "sortOrder": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "slug",
+                  "name",
+                  "sortOrder"
+                ],
+                "additionalProperties": false
+              },
+              "imageUrl": {
+                "type": "string"
+              },
+              "images": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "origin": {
+                "type": "string"
+              },
+              "storage": {
+                "type": "string"
+              },
+              "preparation": {
+                "type": "string"
+              },
+              "nutrition": {
+                "type": "string"
+              },
+              "allergens": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "slug",
+              "name",
+              "aliases",
+              "description",
+              "price",
+              "sellingUnit",
+              "stockStatus",
+              "category"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "productCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "sortOrder",
+          "productCount"
+        ],
+        "additionalProperties": false
+      },
+      "CategoryListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "slug": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sortOrder": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "productCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "slug",
+                "name",
+                "sortOrder",
+                "productCount"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "CategoryFacet": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "sortOrder",
+          "count"
+        ],
+        "additionalProperties": false
+      },
+      "SellingUnit": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "weight",
+              "count",
+              "bunch",
+              "pack"
+            ]
+          }
+        },
+        "required": [
+          "label",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "CategoryRef": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "sortOrder"
+        ],
+        "additionalProperties": false
+      },
+      "ApiErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "INVALID_QUERY",
+                  "PRODUCT_NOT_FOUND",
+                  "ROUTE_NOT_FOUND",
+                  "INTERNAL_ERROR"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "field": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      },
+      "HealthReport": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded"
+            ]
+          },
+          "database": {
+            "type": "string",
+            "enum": [
+              "reachable",
+              "unreachable"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "database"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "paths": {
+    "/api/products": {
+      "get": {
+        "summary": "List products",
+        "description": "Returns every matching product, unpaginated, with the number matched, the unfiltered catalog total, and the category options for the current search. Categories with no matching products are omitted.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Free-text search across product name and aliases, matched case-insensitively as whole tokens that must all be present. Maximum 80 characters.",
+            "schema": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Category slug. Combined with q using AND semantics. An unknown slug is rejected.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Sort order for the matched set. Equal prices break on product name ascending.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "price-asc",
+                "price-desc"
+              ],
+              "default": "price-asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching products with match and catalog counters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "aliases": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "description": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "price": {
+                            "type": "number",
+                            "minimum": 0,
+                            "exclusiveMinimum": true
+                          },
+                          "sellingUnit": {
+                            "type": "object",
+                            "properties": {
+                              "label": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "weight",
+                                  "count",
+                                  "bunch",
+                                  "pack"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "label",
+                              "kind"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "stockStatus": {
+                            "type": "string",
+                            "enum": [
+                              "in_stock",
+                              "low_stock",
+                              "out_of_stock"
+                            ]
+                          },
+                          "category": {
+                            "type": "object",
+                            "properties": {
+                              "slug": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "sortOrder": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "slug",
+                              "name",
+                              "sortOrder"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "imageUrl": {
+                            "type": "string"
+                          },
+                          "images": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "origin": {
+                            "type": "string"
+                          },
+                          "storage": {
+                            "type": "string"
+                          },
+                          "preparation": {
+                            "type": "string"
+                          },
+                          "nutrition": {
+                            "type": "string"
+                          },
+                          "allergens": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "name",
+                          "aliases",
+                          "description",
+                          "price",
+                          "sellingUnit",
+                          "stockStatus",
+                          "category"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "matched": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "catalogTotal": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "slug": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "name": {
+                                "type": "string",
+                                "minLength": 1
+                              },
+                              "sortOrder": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "slug",
+                              "name",
+                              "sortOrder",
+                              "count"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "matched",
+                        "catalogTotal",
+                        "categories"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "INVALID_QUERY",
+                            "PRODUCT_NOT_FOUND",
+                            "ROUTE_NOT_FOUND",
+                            "INTERNAL_ERROR"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "INVALID_QUERY",
+                            "PRODUCT_NOT_FOUND",
+                            "ROUTE_NOT_FOUND",
+                            "INTERNAL_ERROR"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{slug}": {
+      "get": {
+        "summary": "Get a product by slug",
+        "description": "Returns one product in full, including its stock status. Out-of-stock products are served normally.",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "description": "Lower-case hyphenated product slug.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "slug": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "aliases": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "description": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "price": {
+                          "type": "number",
+                          "minimum": 0,
+                          "exclusiveMinimum": true
+                        },
+                        "sellingUnit": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "weight",
+                                "count",
+                                "bunch",
+                                "pack"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "kind"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "stockStatus": {
+                          "type": "string",
+                          "enum": [
+                            "in_stock",
+                            "low_stock",
+                            "out_of_stock"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "slug": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "sortOrder": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "slug",
+                            "name",
+                            "sortOrder"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "imageUrl": {
+                          "type": "string"
+                        },
+                        "images": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "origin": {
+                          "type": "string"
+                        },
+                        "storage": {
+                          "type": "string"
+                        },
+                        "preparation": {
+                          "type": "string"
+                        },
+                        "nutrition": {
+                          "type": "string"
+                        },
+                        "allergens": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "slug",
+                        "name",
+                        "aliases",
+                        "description",
+                        "price",
+                        "sellingUnit",
+                        "stockStatus",
+                        "category"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "INVALID_QUERY",
+                            "PRODUCT_NOT_FOUND",
+                            "ROUTE_NOT_FOUND",
+                            "INTERNAL_ERROR"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "INVALID_QUERY",
+                            "PRODUCT_NOT_FOUND",
+                            "ROUTE_NOT_FOUND",
+                            "INTERNAL_ERROR"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "INVALID_QUERY",
+                            "PRODUCT_NOT_FOUND",
+                            "ROUTE_NOT_FOUND",
+                            "INTERNAL_ERROR"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "summary": "List categories",
+        "description": "Returns every populated category in display order with its unfiltered product count. Empty categories are omitted.",
+        "responses": {
+          "200": {
+            "description": "Populated categories with counts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "sortOrder": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "productCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "name",
+                          "sortOrder",
+                          "productCount"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "INVALID_QUERY",
+                            "PRODUCT_NOT_FOUND",
+                            "ROUTE_NOT_FOUND",
+                            "INTERNAL_ERROR"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Service health",
+        "description": "Reports service status and whether the database is reachable.",
+        "responses": {
+          "200": {
+            "description": "Service is up and the database is reachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ]
+                    },
+                    "database": {
+                      "type": "string",
+                      "enum": [
+                        "reachable",
+                        "unreachable"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "database"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service is up but the database is unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ]
+                    },
+                    "database": {
+                      "type": "string",
+                      "enum": [
+                        "reachable",
+                        "unreachable"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "database"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

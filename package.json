@@ -1,0 +1,30 @@
+{
+  "name": "vegetable-ecommerce",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Monorepo for the vegetable e-commerce storefront and catalog API.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint .",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "allowScripts": {
+    "prisma@6.19.3": true,
+    "@prisma/client@6.19.3": true,
+    "@prisma/engines@6.19.3": true,
+    "esbuild@0.28.2": true
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "typescript-eslint": "^8.71.0"
+  }
+}
